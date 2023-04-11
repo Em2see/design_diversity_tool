@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - public
+  pull_request:
+    branches:
+      - public
+
+
+env:
+  CI: false
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.2
+        with:
+          version: 16
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+          
+
+      - name: Run a multi-line script
+        run: |
+          npm install
+          npm run build
+          
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v1.0.8
+        with:
+          path: build/
+          retention-days: 1
+      
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v2.0.0 
